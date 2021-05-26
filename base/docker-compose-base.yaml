@@ -1,0 +1,104 @@
+################################################################################
+#   Fichero con la estructura de carpetas de cada uno de los docker
+################################################################################
+version: '2'
+
+services:
+  orderer.laliga.com:
+    container_name: orderer.laliga.com
+    image: hyperledger/fabric-orderer:2.2.0
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/laliga.com/orderers/orderer.laliga.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/laliga.com/orderers/orderer.laliga.com/tls/:/var/hyperledger/orderer/tls
+    ports:
+      - 7050:7050
+
+  peer0.laliga.org.laliga.com:
+    container_name: peer0.laliga.org.laliga.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.laliga.org.laliga.com
+      - CORE_PEER_ADDRESS=peer0.laliga.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.laliga.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.laliga.org.laliga.com:7051      
+      - CORE_PEER_LOCALMSPID=LaLigaOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/laliga.org.laliga.com/peers/peer0.laliga.org.laliga.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/laliga.org.laliga.com/peers/peer0.laliga.org.laliga.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer0.realmadrid.org.laliga.com:
+    container_name: peer0.realmadrid.org.laliga.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.realmadrid.org.laliga.com
+      - CORE_PEER_ADDRESS=peer0.realmadrid.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.realmadrid.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.realmadrid.org.laliga.com:7051      
+      - CORE_PEER_LOCALMSPID=RealMadridOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/realmadrid.org.laliga.com/peers/peer0.realmadrid.org.laliga.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/realmadrid.org.laliga.com/peers/peer0.realmadrid.org.laliga.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 7061:7051
+      - 7063:7053
+
+  peer0.barcelona.org.laliga.com:
+    container_name: peer0.barcelona.org.laliga.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.barcelona.org.laliga.com
+      - CORE_PEER_ADDRESS=peer0.barcelona.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.barcelona.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.barcelona.org.laliga.com:7051      
+      - CORE_PEER_LOCALMSPID=BarcelonaOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/barcelona.org.laliga.com/peers/peer0.barcelona.org.laliga.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/barcelona.org.laliga.com/peers/peer0.barcelona.org.laliga.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 7071:7051
+      - 7073:7053
+
+  peer0.atletico.org.laliga.com:
+    container_name: peer0.atletico.org.laliga.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.atletico.org.laliga.com
+      - CORE_PEER_ADDRESS=peer0.atletico.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.atletico.org.laliga.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.atletico.org.laliga.com:7051      
+      - CORE_PEER_LOCALMSPID=AtleticoOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/atletico.org.laliga.com/peers/peer0.atletico.org.laliga.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/atletico.org.laliga.com/peers/peer0.atletico.org.laliga.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 7081:7051
+      - 7083:7053

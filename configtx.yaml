@@ -1,0 +1,245 @@
+################################################################################
+#   Organizations: Organizaciones de la red
+################################################################################
+Organizations:
+    #OrdererOrg
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/laliga.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+        OrdererEndpoints:
+            - orderer.laliga.com:7050
+    #LaLigaOrg
+    - &LaLigaOrg
+        Name: LaLigaOrgMSP
+        ID: LaLigaOrgMSP
+        MSPDir: crypto-config/peerOrganizations/laliga.org.laliga.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('LaLigaOrgMSP.admin', 'LaLigaOrgMSP.peer', 'LaLigaOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('LaLigaOrgMSP.admin', 'LaLigaOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('LaLigaOrgMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('LaLigaOrgMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.laliga.org.laliga.com
+              Port: 7051
+    #RealMadridOrg
+    - &RealMadridOrg
+        Name: RealMadridOrgMSP
+        ID: RealMadridOrgMSP
+        MSPDir: crypto-config/peerOrganizations/realmadrid.org.laliga.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('RealMadridOrgMSP.admin', 'RealMadridOrgMSP.peer', 'RealMadridOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('RealMadridOrgMSP.admin', 'RealMadridOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('RealMadridOrgMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('RealMadridOrgMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.realmadrid.org.laliga.com
+              Port: 7051
+    #BarcelonaOrg
+    - &BarcelonaOrg
+        Name: BarcelonaOrgMSP
+        ID: BarcelonaOrgMSP
+        MSPDir: crypto-config/peerOrganizations/barcelona.org.laliga.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('BarcelonaOrgMSP.admin', 'BarcelonaOrgMSP.peer', 'BarcelonaOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('BarcelonaOrgMSP.admin', 'BarcelonaOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('BarcelonaOrgMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('BarcelonaOrgMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.barcelona.org.laliga.com
+              Port: 7051
+    #AtleticoOrg
+    - &AtleticoOrg
+        Name: AtleticoOrgMSP
+        ID: AtleticoOrgMSP
+        MSPDir: crypto-config/peerOrganizations/atletico.org.laliga.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('AtleticoOrgMSP.admin', 'AtleticoOrgMSP.peer', 'AtleticoOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('AtleticoOrgMSP.admin', 'AtleticoOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('AtleticoOrgMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('AtleticoOrgMSP.peer')"
+        AnchorPeers:
+            - Host: peer0.atletico.org.laliga.com
+              Port: 7051
+
+################################################################################
+#   Capabilities: version de HF utilizada
+################################################################################
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+
+    Orderer: &OrdererCapabilities
+        V2_0: true
+
+    Application: &ApplicationCapabilities
+        V2_0: true        
+
+################################################################################
+#   Application: permisos y politicas aplicadas
+################################################################################
+Application: &ApplicationDefaults
+
+
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+    Capabilities:
+        <<: *ApplicationCapabilities    
+
+################################################################################
+#   Orderer: tipo de protocolo de ordenamiento
+################################################################################
+Orderer: &OrdererDefaults
+    # Se define solo por simplificar aunque se deja parametrizado raft
+    OrdererType: solo
+    #OrdererType: etcdraft
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.laliga.com
+          Port: 7050
+          ClientTLSCert: ../organizations/ordererOrganizations/laliga.com/orderers/orderer.laliga.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/laliga.com/orderers/orderer.laliga.com/tls/server.crt
+    Addresses:
+        - orderer.laliga.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+################################################################################
+#   Channel: valores a incluirse en el bloque genesis
+################################################################################
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+################################################################################
+#   Profiles: los bloques necesarios para configurar los canales y la red
+################################################################################
+Profiles:
+    # Bloque genesis de la red
+    LaLigaOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *LaLigaOrg
+                    - *RealMadridOrg
+                    - *BarcelonaOrg
+                    - *AtleticoOrg
+    # Bloque de configuracion del canal laliga
+    LaLigaOrgsChannel:
+        Consortium: SampleConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *LaLigaOrg
+                - *RealMadridOrg
+                - *BarcelonaOrg
+                - *AtleticoOrg
+            Capabilities:
+                <<: *ApplicationCapabilities
+    # Bloque de configuracion del canal equipos
+    EquiposOrgsChannel:
+        Consortium: SampleConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *RealMadridOrg
+                - *BarcelonaOrg
+                - *AtleticoOrg
+            Capabilities:
+                <<: *ApplicationCapabilities

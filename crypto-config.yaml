@@ -1,0 +1,51 @@
+################################################################################
+#   Informacion criptografica
+################################################################################
+# Orderer Orgs
+OrdererOrgs:
+    - Name: Orderer
+      Domain: laliga.com
+      EnableNodeOUs: true
+      Specs:
+        - Hostname: orderer
+          SANS:
+            - localhost
+# Peer Orgs
+PeerOrgs:
+    - Name: LaLigaOrg
+      Domain: laliga.org.laliga.com
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: RealMadridOrg
+      Domain: realmadrid.org.laliga.com
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: BarcelonaOrg
+      Domain: barcelona.org.laliga.com
+      EnableNodeOUs: true    
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: AtleticoOrg
+      Domain: atletico.org.laliga.com
+      EnableNodeOUs: true    
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+  
